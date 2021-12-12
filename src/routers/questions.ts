@@ -1,18 +1,18 @@
 import express from 'express';
-import example from '../controllers/example';
+import questionsController from '../controllers/questions';
 
 const questionsRouter = express.Router();
 
-questionsRouter.get('/', example.getRoute);
+questionsRouter.get('/', questionsController.getQuestions);
 
-questionsRouter.post('/', example.getRoute);
+questionsRouter.post('/', questionsController.createQuestion);
 
-questionsRouter.get('/:id', example.getRoute);
+questionsRouter.get('/:id', questionsController.getSpecificQuestion);
 
-questionsRouter.post('/:id', example.getRoute);
+questionsRouter.post('/:id', questionsController.answer);
 
-questionsRouter.put('/:id/up-vote', example.getRoute);
+questionsRouter.put('/:id/up-vote', questionsController.upvote);
 
-questionsRouter.put('/:id/down-vote', example.getRoute);
+questionsRouter.put('/:id/down-vote', questionsController.downvote);
 
 export default questionsRouter;
