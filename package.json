@@ -1,5 +1,5 @@
 {
-	"name": "server_template",
+	"name": "full_stack_overflow",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
@@ -12,15 +12,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Nello-Moreira/server_template.git"
+		"url": "git+https://github.com/Nello-Moreira/Projeto17_Full_Stack_Overflow.git"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"bugs": {
-		"url": "https://github.com/Nello-Moreira/server_template/issues"
+		"url": "https://github.com/Nello-Moreira/Projeto17_Full_Stack_Overflow/issues"
 	},
-	"homepage": "https://github.com/Nello-Moreira/server_template#readme",
+	"homepage": "https://github.com/Nello-Moreira/Projeto17_Full_Stack_Overflow#readme",
 	"dependencies": {
 		"cors": "^2.8.5",
 		"dotenv": "^10.0.0",
