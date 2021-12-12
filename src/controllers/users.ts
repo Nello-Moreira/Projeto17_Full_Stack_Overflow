@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import statusCodes from './statusCodes';
 
 async function createUser(
 	request: Request,
@@ -6,7 +7,7 @@ async function createUser(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}

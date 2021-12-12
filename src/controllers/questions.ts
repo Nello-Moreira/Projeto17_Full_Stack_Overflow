@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import statusCodes from './statusCodes';
 
 async function getQuestions(
 	request: Request,
@@ -6,7 +7,7 @@ async function getQuestions(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
@@ -18,7 +19,7 @@ async function getSpecificQuestion(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
@@ -30,7 +31,7 @@ async function createQuestion(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
@@ -42,7 +43,7 @@ async function answer(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
@@ -54,7 +55,7 @@ async function upvote(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
@@ -66,7 +67,7 @@ async function downvote(
 	next: NextFunction
 ) {
 	try {
-		return response.sendStatus(501);
+		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
 		next(error);
 	}
