@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import statusCodes from './statusCodes';
 import usersService from '../services/users';
 import NewUser from '../protocols/NewUser.interface';
-import { isInvalidUser } from '../validation/newUserValidation';
+import { isInvalidUser } from '../validation/users';
 
 async function createUser(
 	request: Request,
