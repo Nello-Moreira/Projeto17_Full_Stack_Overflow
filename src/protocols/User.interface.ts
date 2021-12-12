@@ -1,6 +1,7 @@
 interface User {
-	id: number;
-	username: string;
+	name: string;
+	studyClass: string;
+	token: string;
 }
 
 export default User;
