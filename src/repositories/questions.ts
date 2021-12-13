@@ -94,6 +94,25 @@ async function questionExists(questionId: number): Promise<boolean> {
 	return false;
 }
 
+async function searchQuestionScore(questionId: number): Promise<{ score: number }> {
+	const queryResult = await dbConnection.query('SELECT score FROM questions WHERE id = $1', [
+		questionId,
+	]);
+	return queryResult.rows[0];
+}
+
+async function updateQuestionScore(voteObject: {
+	questionId: number;
+	newScore: number;
+}): Promise<boolean> {
+	const question = await dbConnection.query('UPDATE questions SET score = $2 WHERE id = $1', [
+		voteObject.questionId,
+		voteObject.newScore,
+	]);
+
+	return true;
+}
+
 export default {
 	insertQuestion,
 	searchUnansweredQuestions,
@@ -102,4 +121,6 @@ export default {
 	searchQuestionById,
 	questionExists,
 	searchAnswerByQuestionId,
+	updateQuestionScore,
+	searchQuestionScore,
 };

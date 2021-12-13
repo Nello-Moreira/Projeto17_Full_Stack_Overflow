@@ -92,17 +92,41 @@ async function answer(request: Request, response: Response, next: NextFunction) 
 }
 
 async function upvote(request: Request, response: Response, next: NextFunction) {
+	const questionId = Number(request.params.id);
+
+	const invalidId = isInvalidId(questionId);
+
+	if (invalidId) {
+		return response.status(statusCodes.badRequest).send(invalidId.message);
+	}
+
 	try {
-		return response.sendStatus(statusCodes.notImplemented);
+		await questionsService.upvote(questionId);
+		return response.sendStatus(statusCodes.ok);
 	} catch (error) {
+		if (error instanceof NotFoundError) {
+			return response.status(statusCodes.notFound).send(error.message);
+		}
 		next(error);
 	}
 }
 
 async function downvote(request: Request, response: Response, next: NextFunction) {
+	const questionId = Number(request.params.id);
+
+	const invalidId = isInvalidId(questionId);
+
+	if (invalidId) {
+		return response.status(statusCodes.badRequest).send(invalidId.message);
+	}
+
 	try {
-		return response.sendStatus(statusCodes.notImplemented);
+		await questionsService.downvote(questionId);
+		return response.sendStatus(statusCodes.ok);
 	} catch (error) {
+		if (error instanceof NotFoundError) {
+			return response.status(statusCodes.notFound).send(error.message);
+		}
 		next(error);
 	}
 }

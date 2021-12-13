@@ -15,7 +15,7 @@ async function createQuestion(newQuestion: NewQuestion): Promise<number> {
 		tags: newQuestion.tags,
 		studentId: user.id,
 		submittedAt: new Date(),
-		score: 0,
+		score: 1,
 		answered: false,
 	};
 
@@ -94,4 +94,44 @@ async function getSpecificQuestion(questionId: number) {
 	};
 }
 
-export default { createQuestion, getUnansweredQuestions, answer, getSpecificQuestion };
+async function vote(voteObject: { questionId: number; newScore: number }) {
+	return questionsRepository.updateQuestionScore({
+		questionId: voteObject.questionId,
+		newScore: voteObject.newScore,
+	});
+}
+
+async function upvote(questionId: number) {
+	const question = await questionsRepository.searchQuestionScore(questionId);
+
+	if (!question) {
+		throw new NotFoundError('There are no questions with this id');
+	}
+
+	return vote({
+		questionId,
+		newScore: question.score + 1,
+	});
+}
+
+async function downvote(questionId: number) {
+	const question = await questionsRepository.searchQuestionScore(questionId);
+
+	if (!question) {
+		throw new NotFoundError('There are no questions with this id');
+	}
+
+	return vote({
+		questionId,
+		newScore: question.score - 1,
+	});
+}
+
+export default {
+	createQuestion,
+	getUnansweredQuestions,
+	answer,
+	getSpecificQuestion,
+	upvote,
+	downvote,
+};
