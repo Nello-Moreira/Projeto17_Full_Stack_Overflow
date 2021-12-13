@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import statusCodes from './statusCodes';
-import { isInvalidQuestion } from '../validation/questions';
+import { isInvalidQuestion, isInvalidId } from '../validation/questions';
 import questionsService from '../services/questions';
 import NoContentError from '../errors/NoContent';
 import NotFoundError from '../errors/NotFound';
@@ -20,6 +20,12 @@ async function getQuestions(request: Request, response: Response, next: NextFunc
 
 async function getSpecificQuestion(request: Request, response: Response, next: NextFunction) {
 	const questionId = Number(request.params.id);
+
+	const invalidId = isInvalidId(questionId);
+
+	if (invalidId) {
+		return response.status(statusCodes.badRequest).send(invalidId.message);
+	}
 
 	try {
 		const question = await questionsService.getSpecificQuestion(questionId);
@@ -65,6 +71,12 @@ async function answer(request: Request, response: Response, next: NextFunction) 
 
 	if (!answer || answer.length === 0) {
 		return response.status(statusCodes.badRequest).send('There must be an answer.');
+	}
+
+	const invalidId = isInvalidId(questionId);
+
+	if (invalidId) {
+		return response.status(statusCodes.badRequest).send(invalidId.message);
 	}
 
 	try {

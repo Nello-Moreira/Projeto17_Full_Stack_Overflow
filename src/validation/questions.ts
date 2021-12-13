@@ -8,7 +8,10 @@ const questionSchema = Joi.object({
 	tags: Joi.string().min(1).required(),
 });
 
-const isInvalidQuestion = (newQuestion: NewQuestion) =>
-	questionSchema.validate(newQuestion).error;
+const isInvalidQuestion = (newQuestion: NewQuestion) => questionSchema.validate(newQuestion).error;
 
-export { isInvalidQuestion };
+const idSchema = Joi.number().integer().min(1).required();
+
+const isInvalidId = (id: number) => idSchema.validate(id).error;
+
+export { isInvalidQuestion, isInvalidId };
