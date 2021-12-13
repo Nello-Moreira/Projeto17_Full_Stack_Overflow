@@ -1,9 +1,9 @@
 import dbConnection from './connection';
 import Question from '../protocols/Question.interface';
+import DbQuestion from '../protocols/DbQuestion.interface';
 
 async function insertQuestion(questionObject: Question): Promise<number> {
-	const { question, tags, studentId, submittedAt, score, answered } =
-		questionObject;
+	const { question, tags, studentId, submittedAt, score, answered } = questionObject;
 
 	const createdQuestion = await dbConnection.query(
 		`INSERT INTO questions
@@ -16,4 +16,9 @@ async function insertQuestion(questionObject: Question): Promise<number> {
 	return createdQuestion.rows[0].id;
 }
 
-export default { insertQuestion };
+async function searchUnansweredQuestions(): Promise<DbQuestion[]> {
+	const queryResult = await dbConnection.query('SELECT * FROM questions WHERE answered = false;');
+	return queryResult.rows;
+}
+
+export default { insertQuestion, searchUnansweredQuestions };

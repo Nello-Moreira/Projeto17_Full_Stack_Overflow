@@ -2,12 +2,22 @@ import { Request, Response, NextFunction } from 'express';
 import statusCodes from './statusCodes';
 import { isInvalidQuestion } from '../validation/questions';
 import questionsService from '../services/questions';
+import NoContentError from '../errors/NoContent';
 
-async function getQuestions(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+async function getQuestions(request: Request, response: Response, next: NextFunction) {
+	try {
+		const unansweredQuestions = await questionsService.getUnansweredQuestions();
+
+		return response.status(200).send(unansweredQuestions);
+	} catch (error) {
+		if (error instanceof NoContentError) {
+			return response.sendStatus(204);
+		}
+		next(error);
+	}
+}
+
+async function getSpecificQuestion(request: Request, response: Response, next: NextFunction) {
 	try {
 		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
@@ -15,23 +25,7 @@ async function getQuestions(
 	}
 }
 
-async function getSpecificQuestion(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
-	try {
-		return response.sendStatus(statusCodes.notImplemented);
-	} catch (error) {
-		next(error);
-	}
-}
-
-async function createQuestion(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+async function createQuestion(request: Request, response: Response, next: NextFunction) {
 	const newQuestion = request.body;
 
 	const invalidQuestion = isInvalidQuestion(newQuestion);
@@ -49,11 +43,7 @@ async function createQuestion(
 	}
 }
 
-async function answer(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+async function answer(request: Request, response: Response, next: NextFunction) {
 	try {
 		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
@@ -61,11 +51,7 @@ async function answer(
 	}
 }
 
-async function upvote(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+async function upvote(request: Request, response: Response, next: NextFunction) {
 	try {
 		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
@@ -73,11 +59,7 @@ async function upvote(
 	}
 }
 
-async function downvote(
-	request: Request,
-	response: Response,
-	next: NextFunction
-) {
+async function downvote(request: Request, response: Response, next: NextFunction) {
 	try {
 		return response.sendStatus(statusCodes.notImplemented);
 	} catch (error) {
