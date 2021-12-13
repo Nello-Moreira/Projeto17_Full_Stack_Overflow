@@ -9,5 +9,5 @@ export default function databaseErrorMiddleware(
 	next: NextFunction
 ) {
 	console.error(error);
-	return response.sendStatus(statusCodes.notImplemented);
+	return response.sendStatus(statusCodes.internalError);
 }
