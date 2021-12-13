@@ -17,7 +17,16 @@ async function insertQuestion(questionObject: Question): Promise<number> {
 }
 
 async function searchUnansweredQuestions(): Promise<DbQuestion[]> {
-	const queryResult = await dbConnection.query('SELECT * FROM questions WHERE answered = false;');
+	const queryResult = await dbConnection.query(
+		`SELECT
+			questions.id, questions.question, questions.tags,
+			questions.score, questions.submitted_at AS "submittedAt",
+			users.name as student, users.study_class AS "studyClass"
+		FROM questions
+		JOIN users
+			ON users.id = questions.student_id
+		WHERE answered = false;`
+	);
 	return queryResult.rows;
 }
 
