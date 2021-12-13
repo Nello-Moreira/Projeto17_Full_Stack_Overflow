@@ -5,6 +5,7 @@ import Question from '../protocols/Question.interface';
 import usersService from '../services/users';
 import DbQuestion from '../protocols/DbQuestion.interface';
 import NoContentError from '../errors/NoContent';
+import NotFoundError from '../errors/NotFound';
 
 async function createQuestion(newQuestion: NewQuestion): Promise<number> {
 	const user = await usersService.searchUserByToken(newQuestion.userToken);
@@ -31,4 +32,34 @@ async function getUnansweredQuestions(): Promise<DbQuestion[]> {
 	return unansweredQuestions;
 }
 
-export default { createQuestion, getUnansweredQuestions };
+async function answer(answerObject: {
+	userToken: string;
+	questionId: number;
+	answer: string;
+}): Promise<number> {
+	const { questionId, answer, userToken } = answerObject;
+	const question = await questionsRepository.searchQuestionById(questionId);
+
+	if (!question) {
+		throw new NotFoundError(`There is no question with id ${questionId}`);
+	}
+
+	const user = await usersService.searchUserByToken(userToken);
+
+	if (!user) {
+		throw new NotFoundError(`Invalid user token`);
+	}
+
+	const answerId = await questionsRepository.insertAnswer({
+		questionId: questionId,
+		studentId: user.id,
+		answeredAt: new Date(),
+		answer: answer,
+	});
+
+	await questionsRepository.markQuestionAsAnswered(questionId);
+
+	return answerId;
+}
+
+export default { createQuestion, getUnansweredQuestions, answer };

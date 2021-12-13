@@ -30,4 +30,43 @@ async function searchUnansweredQuestions(): Promise<DbQuestion[]> {
 	return queryResult.rows;
 }
 
-export default { insertQuestion, searchUnansweredQuestions };
+async function searchQuestionById(questionId: number): Promise<DbQuestion> {
+	const queryResult = await dbConnection.query('SELECT * FROM questions WHERE questions.id = $1', [
+		questionId,
+	]);
+
+	return queryResult.rows[0];
+}
+
+async function markQuestionAsAnswered(questionId: number): Promise<boolean> {
+	await dbConnection.query('UPDATE questions SET answered = true WHERE questions.id = $1', [
+		questionId,
+	]);
+
+	return true;
+}
+
+async function insertAnswer(answerObject: {
+	questionId: number;
+	studentId: number;
+	answeredAt: Date;
+	answer: string;
+}): Promise<number> {
+	const queryResult = await dbConnection.query(
+		`INSERT INTO answers
+		(question_id, student_id, answered_at, answer)
+		VALUES ($1, $2, $3, $4)
+		RETURNING id;`,
+		[answerObject.questionId, answerObject.studentId, answerObject.answeredAt, answerObject.answer]
+	);
+
+	return queryResult.rows[0].id;
+}
+
+export default {
+	insertQuestion,
+	searchUnansweredQuestions,
+	insertAnswer,
+	markQuestionAsAnswered,
+	searchQuestionById,
+};
