@@ -38,9 +38,8 @@ async function answer(answerObject: {
 	answer: string;
 }): Promise<number> {
 	const { questionId, answer, userToken } = answerObject;
-	const question = await questionsRepository.searchQuestionById(questionId);
 
-	if (!question) {
+	if (!(await questionsRepository.questionExists(questionId))) {
 		throw new NotFoundError(`There is no question with id ${questionId}`);
 	}
 

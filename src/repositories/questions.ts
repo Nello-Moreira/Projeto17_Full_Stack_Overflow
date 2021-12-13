@@ -2,6 +2,16 @@ import dbConnection from './connection';
 import Question from '../protocols/Question.interface';
 import DbQuestion from '../protocols/DbQuestion.interface';
 
+const questionBaseQuery = `
+	SELECT
+		questions.id, questions.question, questions.tags,
+		questions.score, questions.submitted_at AS "submittedAt",
+		users.name as student, users.study_class AS "studyClass"
+	FROM questions
+	JOIN users
+		ON users.id = questions.student_id
+`;
+
 async function insertQuestion(questionObject: Question): Promise<number> {
 	const { question, tags, studentId, submittedAt, score, answered } = questionObject;
 
@@ -18,22 +28,18 @@ async function insertQuestion(questionObject: Question): Promise<number> {
 
 async function searchUnansweredQuestions(): Promise<DbQuestion[]> {
 	const queryResult = await dbConnection.query(
-		`SELECT
-			questions.id, questions.question, questions.tags,
-			questions.score, questions.submitted_at AS "submittedAt",
-			users.name as student, users.study_class AS "studyClass"
-		FROM questions
-		JOIN users
-			ON users.id = questions.student_id
+		`${questionBaseQuery}
 		WHERE answered = false;`
 	);
 	return queryResult.rows;
 }
 
 async function searchQuestionById(questionId: number): Promise<DbQuestion> {
-	const queryResult = await dbConnection.query('SELECT * FROM questions WHERE questions.id = $1', [
-		questionId,
-	]);
+	const queryResult = await dbConnection.query(
+		`${questionBaseQuery}
+		WHERE questions.id = $1`,
+		[questionId]
+	);
 
 	return queryResult.rows[0];
 }
@@ -63,10 +69,20 @@ async function insertAnswer(answerObject: {
 	return queryResult.rows[0].id;
 }
 
+async function questionExists(questionId: number): Promise<boolean> {
+	const question = await dbConnection.query('SELECT id FROM questions WHERE questions.id = $1', [
+		questionId,
+	]);
+
+	if (question.rowCount > 0) return true;
+	return false;
+}
+
 export default {
 	insertQuestion,
 	searchUnansweredQuestions,
 	insertAnswer,
 	markQuestionAsAnswered,
 	searchQuestionById,
+	questionExists,
 };
