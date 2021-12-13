@@ -1,6 +1,6 @@
-interface User {
-	name: string;
-	studyClass: string;
+import NewUser from './NewUser.interface';
+
+interface User extends NewUser {
 	token: string;
 }
 

@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import statusCodes from './statusCodes';
+import { isInvalidQuestion } from '../validation/questions';
+import questionsService from '../services/questions';
 
 async function getQuestions(
 	request: Request,
@@ -30,8 +32,18 @@ async function createQuestion(
 	response: Response,
 	next: NextFunction
 ) {
+	const newQuestion = request.body;
+
+	const invalidQuestion = isInvalidQuestion(newQuestion);
+
+	if (invalidQuestion) {
+		return response.sendStatus(statusCodes.badRequest);
+	}
+
 	try {
-		return response.sendStatus(statusCodes.notImplemented);
+		const questionId = await questionsService.createQuestion(newQuestion);
+
+		return response.status(statusCodes.ok).send({ id: questionId });
 	} catch (error) {
 		next(error);
 	}
