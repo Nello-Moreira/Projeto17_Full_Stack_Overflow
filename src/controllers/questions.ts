@@ -19,9 +19,17 @@ async function getQuestions(request: Request, response: Response, next: NextFunc
 }
 
 async function getSpecificQuestion(request: Request, response: Response, next: NextFunction) {
+	const questionId = Number(request.params.id);
+
 	try {
-		return response.sendStatus(statusCodes.notImplemented);
+		const question = await questionsService.getSpecificQuestion(questionId);
+
+		return response.status(statusCodes.ok).send(question);
 	} catch (error) {
+		if (error instanceof NotFoundError) {
+			return response.status(statusCodes.notFound).send(error.message);
+		}
+
 		next(error);
 	}
 }

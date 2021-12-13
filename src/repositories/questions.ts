@@ -1,11 +1,12 @@
 import dbConnection from './connection';
 import Question from '../protocols/Question.interface';
 import DbQuestion from '../protocols/DbQuestion.interface';
+import Answer from '../protocols/Answer.interface';
 
 const questionBaseQuery = `
 	SELECT
 		questions.id, questions.question, questions.tags,
-		questions.score, questions.submitted_at AS "submittedAt",
+		questions.score, questions.submitted_at AS "submittedAt", questions.answered,
 		users.name as student, users.study_class AS "studyClass"
 	FROM questions
 	JOIN users
@@ -29,7 +30,7 @@ async function insertQuestion(questionObject: Question): Promise<number> {
 async function searchUnansweredQuestions(): Promise<DbQuestion[]> {
 	const queryResult = await dbConnection.query(
 		`${questionBaseQuery}
-		WHERE answered = false;`
+		WHERE questions.answered = false;`
 	);
 	return queryResult.rows;
 }
@@ -38,6 +39,21 @@ async function searchQuestionById(questionId: number): Promise<DbQuestion> {
 	const queryResult = await dbConnection.query(
 		`${questionBaseQuery}
 		WHERE questions.id = $1`,
+		[questionId]
+	);
+
+	return queryResult.rows[0];
+}
+
+async function searchAnswerByQuestionId(questionId: number): Promise<Answer> {
+	const queryResult = await dbConnection.query(
+		`SELECT
+			answers.id, answers.answered_at AS "answeredAt" , answers.answer,
+			users.name AS "answeredBy"
+		FROM answers
+		JOIN users
+			ON users.id = answers.student_id
+		WHERE question_id = $1`,
 		[questionId]
 	);
 
@@ -85,4 +101,5 @@ export default {
 	markQuestionAsAnswered,
 	searchQuestionById,
 	questionExists,
+	searchAnswerByQuestionId,
 };

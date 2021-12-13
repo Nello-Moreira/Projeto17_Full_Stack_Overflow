@@ -61,4 +61,37 @@ async function answer(answerObject: {
 	return answerId;
 }
 
-export default { createQuestion, getUnansweredQuestions, answer };
+async function getSpecificQuestion(questionId: number) {
+	const question = await questionsRepository.searchQuestionById(questionId);
+
+	if (!question) {
+		throw new NotFoundError('There are no questions with this id');
+	}
+
+	if (!question.answered) {
+		return {
+			question: question.question,
+			student: question.student,
+			studyClass: question.studyClass,
+			tags: question.tags,
+			answered: question.answered,
+			submittedAt: question.submittedAt,
+		};
+	}
+
+	const answer = await questionsRepository.searchAnswerByQuestionId(questionId);
+
+	return {
+		question: question.question,
+		student: question.student,
+		studyClass: question.studyClass,
+		tags: question.tags,
+		answered: question.answered,
+		submittedAt: question.submittedAt,
+		answeredAt: answer.answeredAt,
+		answeredBy: answer.answeredBy,
+		answer: answer.answer,
+	};
+}
+
+export default { createQuestion, getUnansweredQuestions, answer, getSpecificQuestion };
